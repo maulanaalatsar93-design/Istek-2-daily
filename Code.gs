@@ -1,6 +1,6 @@
 /**
  * SISTEM MONITORING INSPEKSI TEKNIK 2 (DAILY ACTIVITY)
- * FINAL OPTIMIZED VERSION - Precision durasi & fast loading
+ * FINAL OPTIMIZED VERSION - FIX: Data input & Pabrik order
  */
 
 const SS_ID = "1bi3-sHZX2ij6-Jaza8M1h0ldQMS6zo2IhutpfIAQOh0";
@@ -30,17 +30,10 @@ function normalizeNumber(value) {
   if (!value) return 0;
   
   let str = String(value).trim();
-  
-  // Jika sudah format "1.5 jam" atau "2.5 h", extract angka saja
   str = str.replace(/\s*(jam|h|hour|hours)?$/i, '');
-  
-  // Ganti koma dengan titik untuk decimal
   str = str.replace(',', '.');
-  
-  // Remove semua karakter selain angka dan titik
   str = str.replace(/[^0-9.]/g, '');
   
-  // Handle multiple dots - keep hanya first dot
   const parts = str.split('.');
   if (parts.length > 2) {
     str = parts[0] + '.' + parts.slice(1).join('');
@@ -48,8 +41,6 @@ function normalizeNumber(value) {
   
   const num = parseFloat(str);
   if (isNaN(num)) return 0;
-  
-  // Validasi range waktu (0 - 24 jam)
   if (num < 0 || num > 24) return 0;
   
   return parseFloat(num.toFixed(2));
@@ -57,26 +48,22 @@ function normalizeNumber(value) {
 
 /**
  * Extract durasi dari row dengan multiple fallback strategies
- * Struktur: M:Lama(12), N:Start(13), O:Finish(14)
  */
 function extractDuration(row) {
   let jam = 0;
   
-  // STRATEGY 1: Kolom M (Index 12) - Lama Pekerjaan (PRIMARY)
+  // STRATEGY 1: Kolom M (Index 12) - Lama Pekerjaan
   if (row[12]) {
     jam = normalizeNumber(row[12]);
-    if (jam > 0) {
-      return jam;
-    }
+    if (jam > 0) return jam;
   }
   
-  // STRATEGY 2: Calculate dari N (Start, Index 13) dan O (Finish, Index 14)
+  // STRATEGY 2: Calculate dari N (Start) dan O (Finish)
   if (row[13] && row[14]) {
     try {
       const startStr = String(row[13]).trim();
       const endStr = String(row[14]).trim();
       
-      // Check format HH:MM
       if (startStr.match(/^\d{1,2}:\d{2}/) && endStr.match(/^\d{1,2}:\d{2}/)) {
         const [startH, startM] = startStr.split(':').map(x => parseInt(x));
         const [endH, endM] = endStr.split(':').map(x => parseInt(x));
@@ -85,22 +72,15 @@ function extractDuration(row) {
           const startMins = startH * 60 + startM;
           let endMins = endH * 60 + endM;
           
-          // Handle midnight crossing (jika end < start)
-          if (endMins < startMins) {
-            endMins += 24 * 60;
-          }
+          if (endMins < startMins) endMins += 24 * 60;
           
           jam = (endMins - startMins) / 60;
           jam = parseFloat(jam.toFixed(2));
           
-          if (jam > 0 && jam <= 24) {
-            return jam;
-          }
+          if (jam > 0 && jam <= 24) return jam;
         }
       }
-    } catch (e) {
-      // Silent fail
-    }
+    } catch (e) {}
   }
   
   return 0;
@@ -228,8 +208,9 @@ function getMasterData() {
 
     const ss = SpreadsheetApp.openById(SS_ID);
     
-    // 1. Data Lokasi (Pabrik & Area)
+    // 1. Data Lokasi (Preserve order dari spreadsheet)
     const locMap = {};
+    const pabrikOrder = [];
     const areaSheet = ss.getSheets().find(s => s.getSheetId() == GID.PABRIK_AREA);
     if (areaSheet) {
       const areaData = areaSheet.getDataRange().getValues().slice(1);
@@ -237,8 +218,14 @@ function getMasterData() {
         if (r[0]) {
           const pabrik = String(r[0]).trim();
           const area = String(r[1]).trim();
-          if (!locMap[pabrik]) locMap[pabrik] = [];
-          if (area && !locMap[pabrik].includes(area)) locMap[pabrik].push(area);
+          
+          if (!locMap[pabrik]) {
+            locMap[pabrik] = [];
+            pabrikOrder.push(pabrik);
+          }
+          if (area && !locMap[pabrik].includes(area)) {
+            locMap[pabrik].push(area);
+          }
         }
       });
     }
@@ -283,6 +270,7 @@ function getMasterData() {
       allNames: [...new Set(allNames)].sort(),
       picMap,
       locMap,
+      pabrikOrder,
       equipMap,
       allEquipList: Array.from(allEquipMap).map(([name, desc]) => ({ name, desc })).sort((a,b) => a.name.localeCompare(b.name)),
       status: ss.getSheets().find(s => s.getSheetId() == GID.STATUS).getDataRange().getValues().flat().filter(String).sort(),
@@ -297,8 +285,8 @@ function getMasterData() {
   } catch (error) {
     Logger.log("getMasterData Error: " + error.toString());
     return { 
-      bagianList: [], allNames: [], picMap: {}, locMap: {}, equipMap: {}, 
-      allEquipList: [], status: [], programs: [], criticality: [] 
+      bagianList: [], allNames: [], picMap: {}, locMap: {}, pabrikOrder: [],
+      equipMap: {}, allEquipList: [], status: [], programs: [], criticality: [] 
     };
   }
 }
@@ -309,6 +297,14 @@ function submitData(payload) {
     const sheet = ss.getSheetByName(GID.DAILY_NAME);
     const generatedCodes = [];
     const rows = [];
+    
+    // Convert tanggal to string format
+    let tanggalStr = payload.common.tanggal;
+    if (tanggalStr instanceof Date) {
+      tanggalStr = Utilities.formatDate(tanggalStr, "GMT+8", "yyyy-MM-dd");
+    } else if (typeof tanggalStr === 'string') {
+      tanggalStr = tanggalStr;
+    }
     
     payload.entries.forEach(item => {
       const shortCode = Math.random().toString(36).substring(2, 9).toUpperCase();
@@ -333,7 +329,7 @@ function submitData(payload) {
       }
       
       rows.push([
-        shortCode, payload.common.tanggal, payload.common.bagian, payload.common.pic_nama, payload.common.pic_nik,
+        shortCode, tanggalStr, payload.common.bagian, payload.common.pic_nama, payload.common.pic_nik,
         item.pabrik, item.area, item.equipment, item.program, item.pekerjaan,
         item.status, item.wo, lamaNumerik, item.start_t, item.end_t, item.criticality, new Date()
       ]);
