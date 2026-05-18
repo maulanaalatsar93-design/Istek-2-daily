@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspeksi Teknik 2 - Daily Activity</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #ec4899;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --light: #f8fafc;
+      --lighter: #f1f5f9;
+      --gray: #64748b;
+      --dark: #1e293b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--dark);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 30px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: rotatelogo 4s linear infinite;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 5px;
+    }
+
+    @keyframes rotatelogo {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .header-text h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .header-text p {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-top: 3px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      overflow-x: auto;
+      background: var(--light);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 16px 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray);
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      min-width: 150px;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+      padding: 30px 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--dark);
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="time"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Entry Section */
+    .entry-section {
+      background: var(--light);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .entry-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .entry-number {
+      background: var(--primary);
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .btn-remove-entry {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-remove-entry:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--lighter);
+      color: var(--dark);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+      width: 100%;
+      justify-content: center;
+      font-size: 16px;
+      padding: 14px;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 25px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-card.alt1 {
+      background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    }
+
+    .stat-card.alt2 {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .stat-card.alt3 {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .stat-unit {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    /* Charts */
+    .chart-container {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .chart-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--dark);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Workload Cards */
+    .workload-card {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .workload-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .workload-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .workload-name {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--dark);
+    }
+
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-high {
+      background: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+    }
+
+    .badge-medium {
+      background: rgba(245, 158, 11, 0.1);
+      color: #d97706;
+    }
+
+    .badge-low {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+    }
+
+    .workload-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .metric {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .metric-label {
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    .metric-value {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--light);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+
+    /* Report Table */
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .report-table thead {
+      background: var(--light);
+    }
+
+    .report-table th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--dark);
+      border-bottom: 2px solid var(--border);
+      font-size: 13px;
+    }
+
+    .report-table td {
+      padding: 15px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .report-table tbody tr:hover {
+      background: var(--light);
+    }
+
+    /* Filters */
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .filter-item label {
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .filter-item select {
+      padding: 10px;
+      min-width: 150px;
+    }
+
+    /* Recent Entries */
+    .recent-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .recent-item {
+      background: var(--light);
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .recent-item-name {
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+
+    .recent-item-job {
+      font-size: 13px;
+      color: var(--gray);
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+      border-left: 4px solid #10b981;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+      border-left: 4px solid #ef4444;
+    }
+
+    /* Manual Equipment Input */
+    .manual-equipment-input {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .manual-equipment-input.show {
+      display: block;
+    }
+
+    /* Loading */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .header {
+        padding: 20px;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .header-content {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .header-text h1 {
+        font-size: 22px;
+      }
+
+      .tab-content {
+        padding: 20px 15px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .workload-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-group {
+        flex-direction: column;
+      }
+
+      .filter-item select {
+        min-width: 100%;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .logo {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <div class="logo">
+          <img id="logoImg" src="https://drive.google.com/uc?id=1oVbSnT03zO_F_7NX8zLuh4WO1PE8w5ND&export=download" alt="Logo Istek">
+        </div>
+        <div class="header-text">
+          <h1>📊 Inspeksi Teknik 2</h1>
+          <p>Sistem Monitoring Daily Activity</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(event, 'input')">📝 Input Data</button>
+      <button class="tab-btn" onclick="switchTab(event, 'dashboard')">📈 Dashboard</button>
+      <button class="tab-btn" onclick="switchTab(event, 'workload')">💼 Analisis Beban Kerja</button>
+      <button class="tab-btn" onclick="switchTab(event, 'report')">📋 Laporan</button>
+    </div>
+
+    <!-- Tab Contents -->
+    
+    <!-- 1. INPUT DATA TAB -->
+    <div id="input" class="tab-content active">
+      <div class="alert alert-success" id="successAlert"></div>
+      <div class="alert alert-error" id="errorAlert"></div>
+
+      <h2 style="margin-bottom: 25px; color: var(--dark);">📝 Input Aktivitas Harian</h2>
+
+      <form id="formInput">
+        <!-- Common Data -->
+        <div style="background: var(--light); padding: 20px; border-radius: var(--radius); margin-bottom: 25px;">
+          <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--dark);">📅 Data Umum</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tanggal</label>
+              <input type="date" id="inpTanggal" required>
+            </div>
+            <div class="form-group">
+              <label>Bagian</label>
+              <select id="inpBagian" required onchange="updatePicDropdown()">
+                <option value="">-- Pilih Bagian --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nama PIC</label>
+              <select id="inpPicNama" required onchange="updateNikDisplay()">
+                <option value="">-- Pilih Nama PIC --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>NIK PIC</label>
+              <input type="text" id="inpPicNik" readonly style="background: var(--lighter);">
+            </div>
+          </div>
+        </div>
+
+        <!-- Entries Container -->
+        <div id="entriesContainer"></div>
+
+        <!-- Add Entry Button -->
+        <div style="margin-bottom: 25px;">
+          <button type="button" class="btn btn-secondary" onclick="addEntry()">+ Tambah Aktivitas</button>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success" onclick="submitForm(event)">
+          ✓ Kirim Data
+        </button>
+      </form>
+    </div>
+
+    <!-- 2. DASHBOARD TAB -->
+    <div id="dashboard" class="tab-content">
+      <h2 style="margin-bottom: 20px;">📊 Dashboard</h2>
+
+      <div class="filter-group">
+        <div class="filter-item">
+          <label>Periode</label>
+          <select id="filterRange" onchange="loadDashboard()">
+            <option value="today">Hari Ini</option>
+            <option value="7d">7 Hari</option>
+            <option value="30d">30 Hari</option>
+            <option value="all">Semua</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>PIC</label>
+          <select id="filterPic" onchange="loadDashboard()">
+            <option value="all">Semua PIC</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="statsContainer"></div>
+
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3 class="chart-title">Top 10 PIC - Input Aktivitas</h3>
+          <canvas id="chartInput"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3 class="chart-title">Top 10 PIC - Jam Kerja</h3>
+          <canvas id="chartJam"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h3 class="chart-title">📈 Trend Aktivitas Harian</h3>
+        <canvas id="chartTrend"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h3 class="chart-title">📌 Aktivitas Terbaru</h3>
+        <div class="recent-list" id="recentContainer"></div>
+      </div>
+    </div>
+
+    <!-- 3. WORKLOAD ANALYSIS TAB -->
+    <div id="workload" class="tab-content">
+      <h2 style="margin-bottom: 20px;">💼 Analisis Beban Kerja</h2>
+
+      <div class="filter-group">
+        <div class="filter-item">
+          <label>Periode</label>
+          <select id="filterWorkloadRange" onchange="loadWorkload()">
+            <option value="today">Hari Ini</option>
+            <option value="7d">7 Hari</option>
+            <option value="30d">30 Hari</option>
+            <option value="all">Semua</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>Urutkan Berdasarkan</label>
+          <select id="filterWorkloadSort" onchange="loadWorkload()">
+            <option value="jam-desc">Jam Kerja (Tertinggi)</option>
+            <option value="jam-asc">Jam Kerja (Terendah)</option>
+            <option value="input-desc">Input (Tertinggi)</option>
+            <option value="input-asc">Input (Terendah)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="workloadContainer"></div>
+    </div>
+
+    <!-- 4. REPORT TAB -->
+    <div id="report" class="tab-content">
+      <h2 style="margin-bottom: 20px;">📋 Laporan Analisis</h2>
+
+      <div class="filter-group">
+        <div class="filter-item">
+          <label>Periode</label>
+          <select id="filterReportRange" onchange="loadReport()">
+            <option value="today">Hari Ini</option>
+            <option value="7d">7 Hari</option>
+            <option value="30d">30 Hari</option>
+            <option value="all">Semua</option>
+          </select>
+        </div>
+      </div>
+
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama PIC</th>
+            <th>Total Input</th>
+            <th>Total Jam</th>
+            <th>Rata-rata Durasi</th>
+          </tr>
+        </thead>
+        <tbody id="reportTable">
+          <tr><td colspan="5" style="text-align: center; color: var(--gray);">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Global state
+    let masterData = {};
+    let currentStats = {};
+    let entryCount = 0;
+    let charts = {};
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      setToday();
+      loadMasterData();
+      loadDashboard();
+    });
+
+    // Set today's date
+    function setToday() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('inpTanggal').value = today;
+    }
+
+    // Load Master Data
+    function loadMasterData() {
+      google.script.run.withSuccessHandler(function(data) {
+        masterData = data;
+        
+        // Populate Bagian
+        const bagianSelect = document.getElementById('inpBagian');
+        data.bagianList.forEach(b => {
+          bagianSelect.innerHTML += `<option value="${b}">${b}</option>`;
+        });
+
+        // Initialize first entry
+        addEntry();
+        loadDashboard();
+      }).getMasterData();
+    }
+
+    // Update PIC dropdown based on Bagian
+    function updatePicDropdown() {
+      const bagian = document.getElementById('inpBagian').value;
+      const picSelect = document.getElementById('inpPicNama');
+      picSelect.innerHTML = '<option value="">-- Pilih Nama PIC --</option>';
+      
+      if (masterData.picMap && masterData.picMap[bagian]) {
+        masterData.picMap[bagian].forEach(p => {
+          picSelect.innerHTML += `<option value="${p.nama}" data-nik="${p.nik}">${p.nama}</option>`;
+        });
+      }
+    }
+
+    // Update NIK display
+    function updateNikDisplay() {
+      const picSelect = document.getElementById('inpPicNama');
+      const selected = picSelect.options[picSelect.selectedIndex];
+      document.getElementById('inpPicNik').value = selected.dataset.nik || '';
+    }
+
+    // Add Entry Row
+    function addEntry() {
+      entryCount++;
+      const container = document.getElementById('entriesContainer');
+      const entryHtml = `
+        <div class="entry-section" id="entry-${entryCount}">
+          <div class="entry-header">
+            <div class="entry-number">${entryCount}</div>
+            <button type="button" class="btn-remove-entry" onclick="removeEntry(${entryCount})">Hapus</button>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Pabrik</label>
+              <select class="entryPabrik" onchange="updateAreaDropdown(${entryCount})" required>
+                <option value="">-- Pilih Pabrik --</option>
+                ${masterData.locMap ? Object.keys(masterData.locMap).map(p => `<option value="${p}">${p}</option>`).join('') : ''}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Area</label>
+              <select class="entryArea" onchange="updateEquipmentDropdown(${entryCount})" required>
+                <option value="">-- Pilih Area --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Equipment</label>
+              <select class="entryEquipment" required onchange="toggleManualEquipment(${entryCount})">
+                <option value="">-- Pilih Equipment --</option>
+              </select>
+              <div class="manual-equipment-input" id="manual-${entryCount}">
+                <input type="text" class="entryEquipmentManual" placeholder="Masukkan equipment lainnya" required style="margin-top: 10px;">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Program</label>
+              <select class="entryProgram" required>
+                <option value="">-- Pilih Program --</option>
+                ${masterData.programs ? masterData.programs.map(p => `<option value="${p}">${p}</option>`).join('') : ''}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Pekerjaan</label>
+              <textarea class="entryPekerjaan" required placeholder="Deskripsi pekerjaan yang dilakukan"></textarea>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Status</label>
+              <select class="entryStatus" required>
+                <option value="">-- Pilih Status --</option>
+                ${masterData.status ? masterData.status.map(s => `<option value="${s}">${s}</option>`).join('') : ''}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>WO</label>
+              <input type="text" class="entryWo" placeholder="Optional">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Mulai (Jam)</label>
+              <input type="time" class="entryStartTime" required onchange="calculateDuration(${entryCount})">
+            </div>
+            <div class="form-group">
+              <label>Selesai (Jam)</label>
+              <input type="time" class="entryEndTime" required onchange="calculateDuration(${entryCount})">
+            </div>
+            <div class="form-group">
+              <label>Durasi (Jam)</label>
+              <input type="text" class="entryDuration" readonly style="background: var(--lighter); cursor: not-allowed;">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Criticality</label>
+              <select class="entryCriticality" required>
+                <option value="">-- Pilih Criticality --</option>
+                ${masterData.criticality ? masterData.criticality.map(c => `<option value="${c}">${c}</option>`).join('') : ''}
+              </select>
+            </div>
+          </div>
+        </div>
+      `;
+      container.innerHTML += entryHtml;
+    }
+
+    // Remove Entry
+    function removeEntry(id) {
+      const entry = document.getElementById(`entry-${id}`);
+      if (entry && document.querySelectorAll('.entry-section').length > 1) {
+        entry.remove();
+      } else {
+        alert('Minimal harus ada 1 aktivitas!');
+      }
+    }
+
+    // Update Area Dropdown
+    function updateAreaDropdown(entryId) {
+      const pabrikSelect = document.querySelector(`#entry-${entryId} .entryPabrik`);
+      const areaSelect = document.querySelector(`#entry-${entryId} .entryArea`);
+      const pabrik = pabrikSelect.value;
+      
+      areaSelect.innerHTML = '<option value="">-- Pilih Area --</option>';
+      if (masterData.locMap && masterData.locMap[pabrik]) {
+        masterData.locMap[pabrik].forEach(area => {
+          areaSelect.innerHTML += `<option value="${area}">${area}</option>`;
+        });
+      }
+      updateEquipmentDropdown(entryId);
+    }
+
+    // Update Equipment Dropdown
+    function updateEquipmentDropdown(entryId) {
+      const areaSelect = document.querySelector(`#entry-${entryId} .entryArea`);
+      const equipSelect = document.querySelector(`#entry-${entryId} .entryEquipment`);
+      const area = areaSelect.value;
+      
+      equipSelect.innerHTML = '<option value="">-- Pilih Equipment --</option>';
+      if (masterData.equipMap && masterData.equipMap[area]) {
+        masterData.equipMap[area].forEach(eq => {
+          equipSelect.innerHTML += `<option value="${eq.name}">${eq.name}${eq.desc ? ' (' + eq.desc + ')' : ''}</option>`;
+        });
+      }
+      equipSelect.innerHTML += '<option value="__MANUAL__">✏️ Lainnya (Isi Manual)</option>';
+      toggleManualEquipment(entryId);
+    }
+
+    // Toggle Manual Equipment Input
+    function toggleManualEquipment(entryId) {
+      const equipSelect = document.querySelector(`#entry-${entryId} .entryEquipment`);
+      const manualInput = document.getElementById(`manual-${entryId}`);
+      
+      if (equipSelect.value === '__MANUAL__') {
+        manualInput.classList.add('show');
+        document.querySelector(`#entry-${entryId} .entryEquipmentManual`).focus();
+      } else {
+        manualInput.classList.remove('show');
+      }
+    }
+
+    // Calculate Duration
+    function calculateDuration(entryId) {
+      const startInput = document.querySelector(`#entry-${entryId} .entryStartTime`);
+      const endInput = document.querySelector(`#entry-${entryId} .entryEndTime`);
+      const durationInput = document.querySelector(`#entry-${entryId} .entryDuration`);
+      
+      if (startInput.value && endInput.value) {
+        const [startH, startM] = startInput.value.split(':').map(Number);
+        const [endH, endM] = endInput.value.split(':').map(Number);
+        
+        const startMins = startH * 60 + startM;
+        let endMins = endH * 60 + endM;
+        if (endMins < startMins) endMins += 24 * 60; // Handle midnight crossing
+        
+        const durationMins = endMins - startMins;
+        const durationHours = (durationMins / 60).toFixed(1);
+        durationInput.value = durationHours + ' jam';
+      }
+    }
+
+    // Submit Form
+    function submitForm(event) {
+      event.preventDefault();
+      
+      const entries = [];
+      const entryElements = document.querySelectorAll('.entry-section');
+      
+      entryElements.forEach((el, idx) => {
+        const equipSelect = el.querySelector('.entryEquipment');
+        let equipment = equipSelect.value;
+        
+        if (equipment === '__MANUAL__') {
+          equipment = el.querySelector('.entryEquipmentManual').value;
+          if (!equipment) {
+            alert(`Aktivitas ${idx + 1}: Silakan isi equipment lainnya!`);
+            return;
+          }
+        }
+        
+        entries.push({
+          pabrik: el.querySelector('.entryPabrik').value,
+          area: el.querySelector('.entryArea').value,
+          equipment: equipment,
+          program: el.querySelector('.entryProgram').value,
+          pekerjaan: el.querySelector('.entryPekerjaan').value,
+          status: el.querySelector('.entryStatus').value,
+          wo: el.querySelector('.entryWo').value,
+          start_t: el.querySelector('.entryStartTime').value,
+          end_t: el.querySelector('.entryEndTime').value,
+          criticality: el.querySelector('.entryCriticality').value
+        });
+      });
+
+      const payload = {
+        common: {
+          tanggal: new Date(document.getElementById('inpTanggal').value),
+          bagian: document.getElementById('inpBagian').value,
+          pic_nama: document.getElementById('inpPicNama').value,
+          pic_nik: document.getElementById('inpPicNik').value
+        },
+        entries: entries
+      };
+
+      const btn = event.target;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span> Mengirim...';
+
+      google.script.run.withSuccessHandler(function(codes) {
+        btn.disabled = false;
+        btn.innerHTML = '✓ Kirim Data';
+        showAlert('success', `✓ Data berhasil disimpan! Kode: ${codes.join(', ')}`);
+        
+        setTimeout(() => {
+          document.getElementById('formInput').reset();
+          setToday();
+          entryCount = 0;
+          document.getElementById('entriesContainer').innerHTML = '';
+          addEntry();
+          loadDashboard();
+          loadWorkload();
+        }, 2000);
+      }).withFailureHandler(function(error) {
+        btn.disabled = false;
+        btn.innerHTML = '✓ Kirim Data';
+        showAlert('error', '✗ Gagal mengirim data: ' + error);
+      }).submitData(payload);
+    }
+
+    // Load Dashboard
+    function loadDashboard() {
+      const range = document.getElementById('filterRange').value;
+      const pic = document.getElementById('filterPic').value;
+
+      google.script.run.withSuccessHandler(function(stats) {
+        currentStats = stats;
+
+        // Update Stats Cards
+        const statsHtml = `
+          <div class="stat-card">
+            <div class="stat-label">📊 Total Input</div>
+            <div class="stat-value">${stats.summary.input}</div>
+          </div>
+          <div class="stat-card alt1">
+            <div class="stat-label">⏱️ Total Jam Kerja</div>
+            <div class="stat-value">${stats.summary.jam.toFixed(1)}</div>
+            <div class="stat-unit">jam</div>
+          </div>
+          <div class="stat-card alt2">
+            <div class="stat-label">📈 Rata-rata Durasi</div>
+            <div class="stat-value">${(stats.summary.input > 0 ? (stats.summary.jam / stats.summary.input).toFixed(1) : 0)}</div>
+            <div class="stat-unit">jam per aktivitas</div>
+          </div>
+          <div class="stat-card alt3">
+            <div class="stat-label">👥 PIC Aktif</div>
+            <div class="stat-value">${stats.lbInput.length}</div>
+          </div>
+        `;
+        document.getElementById('statsContainer').innerHTML = statsHtml;
+
+        // Charts
+        drawChart('chartInput', stats.lbInput, 'Input Aktivitas');
+        drawChart('chartJam', stats.lbJam, 'Jam Kerja', true);
+        drawChartTrend(stats.chart);
+
+        // Recent Entries
+        const recentHtml = stats.recentEntries.map(r => `
+          <div class="recent-item">
+            <div class="recent-item-name">👤 ${r.nama}</div>
+            <div class="recent-item-job">📝 ${r.pekerjaan}</div>
+          </div>
+        `).join('');
+        document.getElementById('recentContainer').innerHTML = recentHtml;
+
+        // Update PIC Filter
+        const picSelect = document.getElementById('filterPic');
+        const currentValue = picSelect.value;
+        picSelect.innerHTML = '<option value="all">Semua PIC</option>';
+        stats.lbInput.forEach(item => {
+          picSelect.innerHTML += `<option value="${item.nama}">${item.nama}</option>`;
+        });
+        if (currentValue && currentValue !== 'all') picSelect.value = currentValue;
+      }).getLiveStats(range, pic);
+    }
+
+    // Draw Bar Chart
+    function drawChart(elementId, data, label, isJam = false) {
+      const ctx = document.getElementById(elementId).getContext('2d');
+      
+      if (charts[elementId]) charts[elementId].destroy();
+      
+      charts[elementId] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.map(d => d.nama),
+          datasets: [{
+            label: label,
+            data: data.map(d => d.val),
+            backgroundColor: 'rgba(99, 102, 241, 0.8)',
+            borderColor: 'rgba(99, 102, 241, 1)',
+            borderWidth: 2,
+            borderRadius: 8,
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: { callback: v => isJam ? v + ' jam' : v }
+            }
+          }
+        }
+      });
+    }
+
+    // Draw Trend Chart
+    function drawChartTrend(chartData) {
+      const ctx = document.getElementById('chartTrend').getContext('2d');
+      if (charts['chartTrend']) charts['chartTrend'].destroy();
+      
+      charts['chartTrend'] = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            label: 'Aktivitas Harian',
+            data: chartData.data,
+            borderColor: 'rgba(99, 102, 241, 1)',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 6,
+            pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+            pointBorderColor: 'white',
+            pointBorderWidth: 2,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+          }
+        }
+      });
+    }
+
+    // Load Workload Analysis
+    function loadWorkload() {
+      const range = document.getElementById('filterWorkloadRange').value;
+      const sort = document.getElementById('filterWorkloadSort').value;
+
+      google.script.run.withSuccessHandler(function(stats) {
+        let data = [...stats.lbInput];
+        const jamMap = {};
+        stats.lbJam.forEach(j => jamMap[j.nama] = j.val);
+
+        // Apply sorting
+        if (sort === 'jam-desc') data.sort((a, b) => (jamMap[b.nama] || 0) - (jamMap[a.nama] || 0));
+        else if (sort === 'jam-asc') data.sort((a, b) => (jamMap[a.nama] || 0) - (jamMap[b.nama] || 0));
+        else if (sort === 'input-desc') data.sort((a, b) => b.val - a.val);
+        else if (sort === 'input-asc') data.sort((a, b) => a.val - b.val);
+
+        // Find max values for progress calculation
+        const maxInput = Math.max(...data.map(d => d.val));
+        const maxJam = Math.max(...stats.lbJam.map(j => j.val));
+
+        const html = data.map(item => {
+          const jam = jamMap[item.nama] || 0;
+          const avgDuration = item.val > 0 ? (jam / item.val).toFixed(1) : 0;
+          let intensity = 'low';
+          let badge = 'badge-low';
+          
+          if (jam >= 8) { intensity = 'Tinggi'; badge = 'badge-high'; }
+          else if (jam >= 4) { intensity = 'Sedang'; badge = 'badge-medium'; }
+          else { intensity = 'Rendah'; badge = 'badge-low'; }
+
+          return `
+            <div class="workload-card">
+              <div class="workload-header">
+                <div class="workload-name">${item.nama}</div>
+                <span class="badge ${badge}">${intensity}</span>
+              </div>
+              <div class="workload-metrics">
+                <div class="metric">
+                  <div class="metric-label">Input</div>
+                  <div class="metric-value">${item.val}</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-label">Jam Kerja</div>
+                  <div class="metric-value">${jam}</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-label">Rata-rata</div>
+                  <div class="metric-value">${avgDuration}h</div>
+                </div>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${(jam / maxJam * 100)}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('workloadContainer').innerHTML = html;
+      }).getLiveStats(range, 'all');
+    }
+
+    // Load Report
+    function loadReport() {
+      const range = document.getElementById('filterReportRange').value;
+
+      google.script.run.withSuccessHandler(function(stats) {
+        const data = stats.lbInput.map((item, idx) => {
+          const jam = (stats.lbJam.find(j => j.nama === item.nama)?.val || 0);
+          const avg = item.val > 0 ? (jam / item.val).toFixed(1) : 0;
+
+          return `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${item.nama}</td>
+              <td>${item.val}</td>
+              <td>${jam}</td>
+              <td>${avg}</td>
+            </tr>
+          `;
+        }).join('');
+
+        document.getElementById('reportTable').innerHTML = data || '<tr><td colspan="5" style="text-align: center; color: var(--gray);">Tidak ada data</td></tr>';
+      }).getLiveStats(range, 'all');
+    }
+
+    // Switch Tab
+    function switchTab(event, tabName) {
+      event.preventDefault();
+      
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+
+      if (tabName === 'dashboard') loadDashboard();
+      else if (tabName === 'workload') loadWorkload();
+      else if (tabName === 'report') loadReport();
+    }
+
+    // Show Alert
+    function showAlert(type, message) {
+      const alertEl = document.getElementById(type === 'success' ? 'successAlert' : 'errorAlert');
+      alertEl.textContent = message;
+      alertEl.classList.add('show');
+      setTimeout(() => alertEl.classList.remove('show'), 5000);
+    }
+  </script>
+</body>
+</html>
