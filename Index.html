@@ -13,9 +13,10 @@
     }
 
     :root {
-      --primary: #6366f1;
-      --primary-dark: #4f46e5;
-      --secondary: #ec4899;
+      --primary: #003DA5;
+      --primary-dark: #002D7A;
+      --secondary: #FF8C00;
+      --secondary-light: #FFB84D;
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
@@ -31,7 +32,7 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #003DA5 0%, #FF8C00 100%);
       color: var(--dark);
       min-height: 100vh;
       padding: 20px;
@@ -73,7 +74,7 @@
       align-items: center;
       justify-content: center;
       animation: rotatelogo 4s linear infinite;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      border: 3px solid var(--secondary);
       padding: 5px;
     }
 
@@ -93,18 +94,20 @@
       font-size: 28px;
       font-weight: 700;
       margin: 0;
+      color: white;
     }
 
     .header-text p {
       font-size: 13px;
-      opacity: 0.9;
+      opacity: 0.95;
       margin-top: 3px;
+      color: var(--secondary-light);
     }
 
     /* Tabs */
     .tabs {
       display: flex;
-      border-bottom: 2px solid var(--border);
+      border-bottom: 3px solid var(--border);
       overflow-x: auto;
       background: var(--light);
     }
@@ -118,7 +121,7 @@
       font-size: 14px;
       font-weight: 600;
       color: var(--gray);
-      border-bottom: 3px solid transparent;
+      border-bottom: 4px solid transparent;
       transition: all 0.3s ease;
       white-space: nowrap;
       min-width: 150px;
@@ -126,12 +129,13 @@
 
     .tab-btn:hover {
       color: var(--primary);
-      background: rgba(99, 102, 241, 0.05);
+      background: rgba(0, 61, 165, 0.05);
     }
 
     .tab-btn.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
+      color: white;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-bottom-color: var(--secondary);
     }
 
     .tab-content {
@@ -199,7 +203,7 @@
     textarea:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      box-shadow: 0 0 0 3px rgba(0, 61, 165, 0.1);
     }
 
     textarea {
@@ -213,6 +217,7 @@
       border-radius: var(--radius);
       padding: 20px;
       margin-bottom: 20px;
+      border-left: 4px solid var(--secondary);
     }
 
     .entry-header {
@@ -223,7 +228,7 @@
     }
 
     .entry-number {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: white;
       width: 32px;
       height: 32px;
@@ -273,7 +278,7 @@
     .btn-primary:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 61, 165, 0.4);
     }
 
     .btn-secondary {
@@ -289,7 +294,7 @@
     }
 
     .btn-success {
-      background: var(--success);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: white;
       width: 100%;
       justify-content: center;
@@ -298,8 +303,8 @@
     }
 
     .btn-success:hover {
-      background: #059669;
       transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 61, 165, 0.3);
     }
 
     /* Stats Cards */
@@ -317,23 +322,27 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       transition: all 0.3s ease;
+      border-top: 4px solid var(--secondary);
     }
 
     .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-lg);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0, 61, 165, 0.3);
     }
 
     .stat-card.alt1 {
-      background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+      background: linear-gradient(135deg, #FF8C00 0%, #FFB84D 100%);
+      border-top-color: var(--primary);
     }
 
     .stat-card.alt2 {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-top-color: var(--secondary);
     }
 
     .stat-card.alt3 {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      border-top-color: var(--secondary-light);
     }
 
     .stat-label {
@@ -358,17 +367,18 @@
     .chart-container {
       background: white;
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 25px;
       margin-bottom: 30px;
       box-shadow: var(--shadow);
-      border: 1px solid var(--border);
+      border: 2px solid var(--border);
+      border-top: 4px solid var(--secondary);
     }
 
     .chart-title {
       font-size: 16px;
       font-weight: 700;
       margin-bottom: 20px;
-      color: var(--dark);
+      color: var(--primary);
     }
 
     .charts-grid {
@@ -392,11 +402,13 @@
       padding: 20px;
       margin-bottom: 15px;
       transition: all 0.3s ease;
+      border-left: 4px solid var(--secondary);
     }
 
     .workload-card:hover {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      box-shadow: 0 0 0 3px rgba(0, 61, 165, 0.1);
+      transform: translateX(5px);
     }
 
     .workload-header {
@@ -409,7 +421,7 @@
     .workload-name {
       font-weight: 700;
       font-size: 16px;
-      color: var(--dark);
+      color: var(--primary);
     }
 
     .badge {
@@ -425,8 +437,8 @@
     }
 
     .badge-medium {
-      background: rgba(245, 158, 11, 0.1);
-      color: #d97706;
+      background: rgba(255, 140, 0, 0.1);
+      color: var(--secondary);
     }
 
     .badge-low {
@@ -482,14 +494,14 @@
     }
 
     .report-table thead {
-      background: var(--light);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
     }
 
     .report-table th {
       padding: 15px;
       text-align: left;
       font-weight: 700;
-      color: var(--dark);
       border-bottom: 2px solid var(--border);
       font-size: 13px;
     }
@@ -522,11 +534,15 @@
     .filter-item label {
       margin: 0;
       font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
     }
 
     .filter-item select {
       padding: 10px;
       min-width: 150px;
+      border: 2px solid var(--secondary);
+      border-radius: 6px;
     }
 
     /* Recent Entries */
@@ -536,15 +552,15 @@
     }
 
     .recent-item {
-      background: var(--light);
+      background: linear-gradient(135deg, rgba(0, 61, 165, 0.05) 0%, rgba(255, 140, 0, 0.05) 100%);
       padding: 15px;
       border-radius: 8px;
-      border-left: 4px solid var(--primary);
+      border-left: 4px solid var(--secondary);
     }
 
     .recent-item-name {
       font-weight: 700;
-      color: var(--dark);
+      color: var(--primary);
       margin-bottom: 4px;
     }
 
@@ -700,8 +716,8 @@
 
       <form id="formInput">
         <!-- Common Data -->
-        <div style="background: var(--light); padding: 20px; border-radius: var(--radius); margin-bottom: 25px;">
-          <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--dark);">📅 Data Umum</h3>
+        <div style="background: var(--light); padding: 20px; border-radius: var(--radius); margin-bottom: 25px; border-left: 4px solid var(--secondary);">
+          <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--primary);">📅 Data Umum</h3>
           
           <div class="form-row">
             <div class="form-group">
@@ -747,7 +763,7 @@
 
     <!-- 2. DASHBOARD TAB -->
     <div id="dashboard" class="tab-content">
-      <h2 style="margin-bottom: 20px;">📊 Dashboard</h2>
+      <h2 style="margin-bottom: 20px; color: var(--primary);">📊 Dashboard</h2>
 
       <div class="filter-group">
         <div class="filter-item">
@@ -771,11 +787,11 @@
 
       <div class="charts-grid">
         <div class="chart-container">
-          <h3 class="chart-title">Top 10 PIC - Input Aktivitas</h3>
+          <h3 class="chart-title">🏆 Top 10 PIC - Input Aktivitas</h3>
           <canvas id="chartInput"></canvas>
         </div>
         <div class="chart-container">
-          <h3 class="chart-title">Top 10 PIC - Jam Kerja</h3>
+          <h3 class="chart-title">⏱️ Top 10 PIC - Jam Kerja</h3>
           <canvas id="chartJam"></canvas>
         </div>
       </div>
@@ -793,7 +809,7 @@
 
     <!-- 3. WORKLOAD ANALYSIS TAB -->
     <div id="workload" class="tab-content">
-      <h2 style="margin-bottom: 20px;">💼 Analisis Beban Kerja</h2>
+      <h2 style="margin-bottom: 20px; color: var(--primary);">💼 Analisis Beban Kerja</h2>
 
       <div class="filter-group">
         <div class="filter-item">
@@ -821,7 +837,7 @@
 
     <!-- 4. REPORT TAB -->
     <div id="report" class="tab-content">
-      <h2 style="margin-bottom: 20px;">📋 Laporan Analisis</h2>
+      <h2 style="margin-bottom: 20px; color: var(--primary);">📋 Laporan Analisis</h2>
 
       <div class="filter-group">
         <div class="filter-item">
@@ -913,6 +929,10 @@
     function addEntry() {
       entryCount++;
       const container = document.getElementById('entriesContainer');
+      const pabrikOptions = masterData.pabrikOrder 
+        ? masterData.pabrikOrder.map(p => `<option value="${p}">${p}</option>`).join('')
+        : (masterData.locMap ? Object.keys(masterData.locMap).map(p => `<option value="${p}">${p}</option>`).join('') : '');
+      
       const entryHtml = `
         <div class="entry-section" id="entry-${entryCount}">
           <div class="entry-header">
@@ -925,7 +945,7 @@
               <label>Pabrik</label>
               <select class="entryPabrik" onchange="updateAreaDropdown(${entryCount})" required>
                 <option value="">-- Pilih Pabrik --</option>
-                ${masterData.locMap ? Object.keys(masterData.locMap).map(p => `<option value="${p}">${p}</option>`).join('') : ''}
+                ${pabrikOptions}
               </select>
             </div>
             <div class="form-group">
@@ -1071,7 +1091,7 @@
         
         const startMins = startH * 60 + startM;
         let endMins = endH * 60 + endM;
-        if (endMins < startMins) endMins += 24 * 60; // Handle midnight crossing
+        if (endMins < startMins) endMins += 24 * 60;
         
         const durationMins = endMins - startMins;
         const durationHours = (durationMins / 60).toFixed(1);
@@ -1114,7 +1134,7 @@
 
       const payload = {
         common: {
-          tanggal: new Date(document.getElementById('inpTanggal').value),
+          tanggal: document.getElementById('inpTanggal').value,
           bagian: document.getElementById('inpBagian').value,
           pic_nama: document.getElementById('inpPicNama').value,
           pic_nik: document.getElementById('inpPicNik').value
@@ -1216,8 +1236,8 @@
           datasets: [{
             label: label,
             data: data.map(d => d.val),
-            backgroundColor: 'rgba(99, 102, 241, 0.8)',
-            borderColor: 'rgba(99, 102, 241, 1)',
+            backgroundColor: 'rgba(0, 61, 165, 0.8)',
+            borderColor: 'rgba(255, 140, 0, 1)',
             borderWidth: 2,
             borderRadius: 8,
           }]
@@ -1250,13 +1270,13 @@
           datasets: [{
             label: 'Aktivitas Harian',
             data: chartData.data,
-            borderColor: 'rgba(99, 102, 241, 1)',
-            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderColor: 'rgba(0, 61, 165, 1)',
+            backgroundColor: 'rgba(255, 140, 0, 0.1)',
             borderWidth: 3,
             fill: true,
             tension: 0.4,
             pointRadius: 6,
-            pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+            pointBackgroundColor: 'rgba(255, 140, 0, 1)',
             pointBorderColor: 'white',
             pointBorderWidth: 2,
           }]
